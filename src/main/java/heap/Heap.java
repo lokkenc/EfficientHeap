@@ -76,8 +76,17 @@ public final class Heap<V, P extends Comparable<P>> {
         // cases where no bubbling up is needed.
         // When done, this should pass Phase1Test::test00Add().
         //
+        /*
+        Entry e = new Entry(v, p);
+        int k = addHelper(0, e);
+        if (k != -1)
+            bubbleUp(k);
+        */
+        Entry e = new Entry(v, p);
+        c.append(e);
+        bubbleUp(c.size() - 1);
         // TODO 3.1: Update this method to maintain class invariants 3-5.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 
     /** Return the number of values in this heap.
@@ -96,7 +105,11 @@ public final class Heap<V, P extends Comparable<P>> {
         //
         // TODO 3.2 Change this method to additionally maintain class
         // invariants 3-5 by updating the map field.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+
+        Entry temp = c.get(h);
+        c.put(h, c.get(k));
+        c.put(k, temp);
     }
 
     /** Bubble c[k] up in heap to its right place.
@@ -106,7 +119,16 @@ public final class Heap<V, P extends Comparable<P>> {
         // TODO 1.3 As you know, this method should be called within add in order
         // to bubble a value up to its proper place, based on its priority.
         // When done, this should pass Phase1Test::test15Add_BubbleUp()
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        if (k != 0)
+        {
+            int pIndex = (k-1) / 2;
+            if (c.get(pIndex).priority.compareTo(c.get(k).priority) > 0)
+            {
+                swap(pIndex, k);
+                bubbleUp(pIndex);
+            }
+        }
     }
 
     /** Return the value of this heap with lowest priority. Do not
@@ -115,7 +137,10 @@ public final class Heap<V, P extends Comparable<P>> {
     public V peek() throws NoSuchElementException {
         // TODO 1.4: Do peek. This is an easy one.
         //         test20Peek() will not find errors if this is correct.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        if (c.size() == 0)
+            throw new NoSuchElementException();
+        return c.get(0).value;
     }
 
     /** Remove and return the element of this heap with lowest priority.
@@ -130,7 +155,15 @@ public final class Heap<V, P extends Comparable<P>> {
         // priority are not swapped.
         //
         // TODO 3.3: Update poll() to maintain class invariants 3-5.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        if (c.size() == 0)
+            throw new NoSuchElementException();
+        V retVal = c.get(0).value;
+        c.put(0, c.pop());
+        if (c.size() > 0)
+            bubbleDown(0);
+        return retVal;
+
     }
 
     /** Bubble c[k] down in heap until it finds the right place.
@@ -143,7 +176,29 @@ public final class Heap<V, P extends Comparable<P>> {
         // TODO 1.6: Do poll (1.5) and bubbleDown together.  We also suggest
         //         implementing and using smallerChild, though you don't
         //         have to.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        int leftIndex = 2*k + 1;
+        int rightIndex = 2*k + 2;
+        int target;
+        if (rightIndex >= c.size())
+        {
+            if (leftIndex >= c.size())
+                return;
+            else
+                target = leftIndex;
+        } else
+        {
+            if (c.get(leftIndex).priority.compareTo(c.get(rightIndex).priority) < 0)
+                target = leftIndex;
+            else
+                target = rightIndex;
+        }
+        if (c.get(k).priority.compareTo(c.get(target).priority) > 0)
+        {
+            swap(target, k);
+            bubbleDown(target);
+        }
+
     }
 
     /** Return true if the value v is in the heap, false otherwise.

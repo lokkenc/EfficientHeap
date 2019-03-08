@@ -27,6 +27,8 @@ public class AList<T> {
   /** Creates an AList with the given capacity */
   public AList(int capacity) {
     // TODO 1
+    a = createArray(capacity);
+    size = 0;
   }
 
   /* Grows a to double its current size if newSize exceeds a's capacity. Does
@@ -35,6 +37,16 @@ public class AList<T> {
   * change the AList's size. */
   protected void growIfNeeded(int newSize) {
     // TODO 2a
+    while (newSize > a.length)
+    {
+    
+      T[] temp = createArray(a.length * 2);
+      for (int i = 0; i < a.length; i++)
+      {
+        temp[i] = a[i];
+      }
+      a = temp;
+    }
   }
 
   /** Resizes the AList.
@@ -42,25 +54,37 @@ public class AList<T> {
   *  exceeds capacity. */
   public void resize(int newsize) {
     // TODO 2b
+    growIfNeeded(newsize);
+
+    size = newsize;
   }
 
   /** Gets element i from AList.
   * @throws ArrayIndexOutOfBoundsException if 0 <= i < size does not hold */
   public T get(int i) {
     // TODO 3a
-    throw new UnsupportedOperationException(); // delete this once implemented!
+    if (i >= size)
+      throw new ArrayIndexOutOfBoundsException();
+    else
+      return a[i];
   }
 
   /** Sets the ith element of the list to value.
   * @throws ArrayIndexOutOfBoundsException if 0 <= i < size does not hold */
   public void put(int i, T value) {
     // TODO 3b
+    if (i >= size && size > 0)
+      throw new ArrayIndexOutOfBoundsException();
+    else
+      a[i] = value;
   }
 
   /** Appends value at the end of the AList, increasing size by 1.
   * Grows the array if needed to fit the appended value */
   public void append(T value) {
     // TODO 4a
+    resize(size + 1);
+    put(size - 1, value);
   }
 
   /** Removes and returns the value at the end of the AList.
@@ -68,7 +92,12 @@ public class AList<T> {
   *  @throws NoSuchElementException if size == 0*/
   public T pop() {
     // TODO 4b
-    throw new UnsupportedOperationException(); // delete this once implemented!
+    if (size == 0)
+      throw new NoSuchElementException();
+    T temp = a[size - 1];
+    a[size - 1] = null;
+    size -= 1;
+    return temp;
   }
 
   /*  Create and return a T[] of size n.

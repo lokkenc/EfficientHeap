@@ -44,6 +44,7 @@ public class HashTable<K,V> {
     /** constructor: initialize the given capacity */
     public HashTable(int capacity) {
         buckets = createBucketArray(capacity);
+        size = 0;
     }
 
     /** Return the size of the map (the number of key-value mappings in the
@@ -63,7 +64,17 @@ public class HashTable<K,V> {
      * Runtime: average case O(1); worst case O(size) */
     public V get(K key) {
         // TODO 2.1 - do this together with put.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        Pair cur = buckets[getHash(key) % getCapacity()];
+        if (cur == null)
+            return null;
+        while (cur.key != key)
+        {
+            cur = cur.next;
+            if (cur == null)
+                return null;
+        }
+        return cur.value;
     }
 
     /** Associate the specified value with the specified key in this map. If
@@ -82,14 +93,48 @@ public class HashTable<K,V> {
         //
         // TODO 2.5 - modify this method to grow and rehash if the load factor
         //            exceeds 0.8.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        int bucketIndex = getHash(key) % getCapacity();
+        Pair cur = buckets[bucketIndex];
+        Pair prev = cur;
+        if (cur == null)
+        { 
+            buckets[bucketIndex] = new Pair(key, val);
+            size += 1;
+            return null;
+        }
+        while (cur != null && cur.key != key)
+        {
+            prev = cur;
+            cur = cur.next;
+        }   
+        if (cur == null)
+        {
+            prev.next = new Pair(key, val);
+            size += 1;
+            return null;
+        }
+        V ret = cur.value;
+        cur.value = val;
+        return ret;
+
+        
+    }
+
+    private int getHash(K k)
+    {
+        int h = k.hashCode();
+        return Math.abs(h);
     }
 
     /** Return true if this map contains a mapping for the specified key.
      *  Runtime: average case O(1); worst case O(size) */
     public boolean containsKey(K key) {
         // TODO 2.3
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        if (get(key) == null)
+            return false;
+        return true;
     }
 
     /** Remove the mapping for the specified key from this map if present.
@@ -98,7 +143,27 @@ public class HashTable<K,V> {
      *  Runtime: average case O(1); worst case O(size)*/
     public V remove(K key) {
         // TODO 2.4
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        if (!(containsKey(key)))
+            return null;
+        int bucketIndex = getHash(key) % getCapacity();
+        Pair cur = buckets[bucketIndex];
+        if (cur.key == key)
+        {
+            buckets[bucketIndex] = cur.next;
+        } else
+        {
+            Pair prev = cur;
+            while (cur.key != key)
+            {
+                prev = cur;
+                cur = cur.next;
+            }
+            prev.next = cur.next;
+        }
+        size -= 1;
+        return cur.value;
+        
     }
 
 
