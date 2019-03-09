@@ -3,8 +3,11 @@ package heap;
 import java.lang.reflect.Array;
 import java.util.NoSuchElementException;
 
-/** An ArrayList-like dynamic array class that allocates
-* new memory when needed */
+/*  Author: Chris Lokken
+    Date: 3/6/19
+    Purpose:
+      An ArrayList-like dynamic array class that allocates
+      new memory when needed */
 public class AList<T> {
 
   protected int size; // number of elements in the AList

@@ -1,8 +1,12 @@
 package heap;
 
-/** A hash table modeled after java.util.Map. It uses chaining for collision
- * resolution and grows its underlying storage by a factor of 2 when the load
- * factor exceeds 0.8. */
+
+/*  Author: Chris Lokken
+    Date: 3/6/19
+    Purpose:
+    A hash table modeled after java.util.Map. It uses chaining for collision
+    resolution and grows its underlying storage by a factor of 2 when the load
+    factor exceeds 0.8. */
 public class HashTable<K,V> {
 
     protected Pair[] buckets; // array of list nodes that store K,V pairs
@@ -101,6 +105,7 @@ public class HashTable<K,V> {
         { 
             buckets[bucketIndex] = new Pair(key, val);
             size += 1;
+            growIfNeeded();
             return null;
         }
         while (cur != null && cur.key != key)
@@ -112,10 +117,12 @@ public class HashTable<K,V> {
         {
             prev.next = new Pair(key, val);
             size += 1;
+            growIfNeeded();
             return null;
         }
         V ret = cur.value;
         cur.value = val;
+        growIfNeeded();
         return ret;
 
         
@@ -171,7 +178,22 @@ public class HashTable<K,V> {
     /* check the load factor; if it exceeds 0.8, double the array size
      * (capacity) and rehash values from the old array to the new array */
     private void growIfNeeded() {
-      throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
+        double loadFactor = (double) size / (double) buckets.length;
+        if (loadFactor <= 0.8)
+            return;
+        Pair[] temp = buckets;
+        buckets = createBucketArray(buckets.length * 2);
+        size = 0;
+        for (int i = 0; i < temp.length; i++)
+        {
+            Pair cur = temp[i];
+            while (cur != null)
+            {  
+                put(cur.key, cur.value);
+                cur = cur.next;
+            }
+        }
     }
 
     /* useful method for debugging - prints a representation of the current
